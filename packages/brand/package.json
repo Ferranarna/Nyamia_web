@@ -1,0 +1,10 @@
+{
+  "name": "@nyamia/brand",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Nyamia brand tokens and assets shared with the product app",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./assets/*": "./assets/*"
+  }
+}

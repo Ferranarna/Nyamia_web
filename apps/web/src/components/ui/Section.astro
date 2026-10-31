@@ -1,0 +1,32 @@
+---
+/** Section shell: anchor id, vertical rhythm, eyebrow + H2 statement + optional lead. */
+interface Props {
+  id?: string
+  eyebrow?: string
+  headline?: string
+  lead?: string
+  class?: string
+  innerClass?: string
+  align?: 'left' | 'center'
+}
+const { id, eyebrow, headline, lead, class: className = '', innerClass = '', align = 'left' } = Astro.props
+const headingId = id ? `${id}-title` : undefined
+---
+
+<section id={id} aria-labelledby={headingId} class:list={['scroll-mt-20 py-section', className]}>
+  <div class:list={['mx-auto w-full max-w-[75rem] px-5 sm:px-6', innerClass]}>
+    {headline && (
+      <header
+        class:list={['mb-12 max-w-[48rem] lg:mb-16', align === 'center' && 'mx-auto text-center']}
+        data-reveal
+      >
+        {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
+        <h2 id={headingId} class="text-statement text-text">
+          {headline}
+        </h2>
+        {lead && <p class="mt-5 text-lead text-text-muted">{lead}</p>}
+      </header>
+    )}
+    <slot />
+  </div>
+</section>

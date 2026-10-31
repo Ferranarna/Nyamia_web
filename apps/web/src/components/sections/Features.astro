@@ -1,0 +1,183 @@
+---
+import Section from '../ui/Section.astro'
+import Icon from '../ui/Icon.astro'
+import type { IconName } from '../ui/icons'
+import { ClientFicha } from '../mockups/ClientFicha'
+import { WeekHeaders, ComplianceLegend, dayTitle } from '../mockups/WeekMenu'
+import { PdfSheet } from '../mockups/PdfPreview'
+import { Dock, initials } from '../mockups/Dock'
+import { badge, historyItem, input, menuGrid } from '../mockups/appUi'
+import { RECIPE_KCAL, type Status } from '../mockups/data'
+import { getDictionary, type Locale } from '../../i18n'
+import { ANCHORS } from '../../i18n/routes'
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = getDictionary(locale)
+const m = t.mockup
+const icons: IconName[] = [
+  'user-round',
+  'heart',
+  'calendar-days',
+  'repeat',
+  'sliders',
+  'file-text',
+  'layers',
+  'globe',
+]
+const spans = ['lg:col-span-2', 'lg:col-span-2', 'lg:col-span-2', '', '', '', 'lg:col-span-2', '']
+const weekMix: Status[] = ['green', 'green', 'orange', 'green', 'green', 'red', 'green']
+const salmon = 4
+const imported = 9
+/** Illustrative portion shown on both days: the tile's claim is "same grams all week". */
+const salmonGrams = 180
+---
+
+<Section
+  id={ANCHORS.features}
+  eyebrow={t.features.eyebrow}
+  headline={t.features.headline}
+  lead={t.features.sub}
+>
+  <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="features">
+    {t.features.items.map((f, i) => (
+      <li
+        class:list={[
+          'group flex flex-col gap-3 rounded-card border border-border bg-surface p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-150 ease-(--ease-ui) [@media(pointer:fine)]:hover:-translate-y-0.5 [@media(pointer:fine)]:hover:border-border-strong [@media(pointer:fine)]:hover:shadow-md motion-reduce:hover:translate-y-0',
+          spans[i],
+        ]}
+        data-reveal
+        data-inview-scope
+        style={`--stagger:${i}`}
+      >
+        <Icon name={icons[i] ?? 'check'} size={24} class="text-brand-600" />
+        <h3 class="text-xl font-semibold tracking-tight text-text">{f.title}</h3>
+        <p class="text-text-muted">{f.body}</p>
+        <div class="mt-auto pt-3" aria-hidden="true" inert>
+          {i === 0 && (
+            <div class="rounded-card border border-border bg-canvas p-4">
+              <ClientFicha t={m} variant="targets" />
+            </div>
+          )}
+          {i === 1 && (
+            <div class="flex flex-col gap-2 rounded-card border border-border bg-canvas p-4">
+              <span class:list={[input.base, input.state.default, 'trick-fade truncate text-text-muted']}>
+                https://example.com/receta/…
+              </span>
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class:list={[
+                    menuGrid.chip,
+                    'trick-pop transition-transform group-hover:-translate-y-0.5 group-hover:shadow-md',
+                  ]}
+                  style="--stagger:3"
+                >
+                  <span class="font-medium">{m.recipes[imported]!.title}</span>
+                  <span class="text-text-muted tabular-nums">{RECIPE_KCAL[imported]} kcal</span>
+                </span>
+                <span class:list={[badge.base, badge.variants.accent]}>
+                  {m.client.allergensLabel}: {m.client.allergens[0]!.label}
+                </span>
+              </div>
+            </div>
+          )}
+          {i === 2 && (
+            <div class="flex flex-col gap-3 rounded-card border border-border bg-canvas p-4">
+              <WeekHeaders t={m} statuses={weekMix} />
+              <ComplianceLegend t={m} />
+            </div>
+          )}
+          {i === 3 && (
+            <div class="relative flex flex-col gap-6 rounded-card border border-border bg-canvas p-4">
+              {[1, 5].map((d) => (
+                <div class="relative z-10 flex flex-col gap-1">
+                  <span class="text-xs font-semibold text-text capitalize">{dayTitle(m, d)}</span>
+                  <span class:list={[menuGrid.card, 'mt-0']}>
+                    <span class="line-clamp-1">{m.recipes[salmon]!.title}</span>
+                    <span class="text-text-muted tabular-nums">
+                      {RECIPE_KCAL[salmon]} kcal
+                      <span class="text-brand-700">· {salmonGrams} g</span>
+                    </span>
+                  </span>
+                </div>
+              ))}
+              <svg
+                class="absolute top-14 left-0 h-[calc(100%-6rem)] w-4 text-brand-300 transition-colors group-hover:text-brand-500"
+                viewBox="0 0 16 100"
+                preserveAspectRatio="none"
+              >
+                <path
+                  class="trick-draw"
+                  d="M8 0 V100"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-dasharray="4 4"
+                  fill="none"
+                  vector-effect="non-scaling-stroke"
+                />
+              </svg>
+            </div>
+          )}
+          {i === 4 && (
+            <div class="flex flex-col gap-2 rounded-card border border-border bg-canvas p-4">
+              <span class:list={[badge.base, badge.variants.brand, 'self-start']}>{m.client.name}</span>
+              {m.recipeModal.ingredients.slice(0, 2).map((ing) => (
+                <div class="flex items-center justify-between gap-2 text-sm text-text">
+                  <span class="truncate">{ing.name}</span>
+                  <span
+                    class:list={[
+                      input.box,
+                      input.state.default,
+                      'w-20 shrink-0 py-1 text-right tabular-nums',
+                    ]}
+                  >
+                    {ing.grams}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          {i === 5 && (
+            <div class="rounded-card border border-border bg-canvas p-4">
+              <div class="transition-transform duration-150 group-hover:-rotate-[1.5deg]">
+                <PdfSheet t={m} />
+              </div>
+            </div>
+          )}
+          {i === 6 && (
+            <div class="flex flex-col gap-2 rounded-card border border-border bg-canvas p-4">
+              <Dock
+                chips={[
+                  {
+                    label: m.client.name,
+                    initials: initials(m.client.name),
+                    count: 2,
+                    active: true,
+                    className: 'trick-pop',
+                  },
+                  {
+                    label: m.windows.recipes,
+                    initials: 'G',
+                    count: 1,
+                    general: true,
+                    className: 'trick-pop',
+                  },
+                ]}
+              />
+              <div>
+                <p class={historyItem.group}>{m.sidebar.historyTitle}</p>
+                {m.sidebar.history.slice(0, 2).map((h, hi) => (
+                  <p class:list={[historyItem.base, 'block py-1.5', hi === 0 && historyItem.active]}>
+                    {h.label}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </li>
+    ))}
+  </ul>
+</Section>

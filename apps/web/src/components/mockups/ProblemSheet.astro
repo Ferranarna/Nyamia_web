@@ -1,0 +1,90 @@
+---
+/** I1 · The manual spreadsheet (illustration, not app chrome, not any spreadsheet brand). */
+import { getDictionary, type Locale } from '../../i18n'
+import { PROBLEM_TOTAL, TARGETS } from './data'
+
+interface Props {
+  locale: Locale
+}
+const t = getDictionary(Astro.props.locale)
+const s = t.mockup.problemSheet
+const total = [PROBLEM_TOTAL.kcal, PROBLEM_TOTAL.p, PROBLEM_TOTAL.hc, PROBLEM_TOTAL.g]
+const target = [TARGETS.kcal, TARGETS.protein, TARGETS.carbs, TARGETS.fat]
+const off = total.map((v, i) => Math.abs(v - target[i]!) / target[i]! > 0.1)
+---
+
+<div
+  aria-hidden="true"
+  class="overflow-hidden rounded-card border border-border bg-surface font-normal shadow-md"
+  data-inview-scope
+>
+  <div class="flex items-center gap-2 border-b border-border bg-surface-muted px-4 py-2.5">
+    <span class="flex gap-1">
+      <span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+    </span>
+    <span class="ml-2 truncate text-xs text-text-muted">{s.fileName}</span>
+  </div>
+  <table class="w-full border-collapse text-[13px] tabular-nums">
+    <thead>
+      <tr class="bg-surface-muted text-left text-xs text-text-muted">
+        {s.columns.map((c, i) => (
+          <th class:list={['border-b border-border px-3 py-2 font-medium', i > 0 && 'text-right']}>
+            {c.label}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {s.rows.map((r, ri) => (
+        <tr class="border-b border-border">
+          <td class="px-3 py-2 text-text">{r.food}</td>
+          {[r.grams, r.kcal, r.p, r.hc, r.g].map((v, ci) => (
+            <td class="scramble px-3 py-2 text-right text-text" style={`--stagger:${ri * 5 + ci}`}>
+              {v}
+            </td>
+          ))}
+        </tr>
+      ))}
+      <tr class="border-b border-border text-text-muted">
+        <td class="px-3 py-1.5">…</td>
+        <td class="px-3 py-1.5 text-right">…</td>
+        <td class="px-3 py-1.5 text-right">…</td>
+        <td class="px-3 py-1.5 text-right">…</td>
+        <td class="px-3 py-1.5 text-right">…</td>
+        <td class="px-3 py-1.5 text-right">…</td>
+      </tr>
+      <tr class="border-b border-border font-semibold">
+        <td class="px-3 py-2 text-text">
+          {s.totalLabel}
+          <span
+            class="trick-pop ml-1.5 inline-flex rounded-pill bg-danger-50 px-2 py-0.5 text-[11px] font-semibold text-danger-700"
+            style="--stagger:6"
+          >
+            {s.offLabel}
+          </span>
+        </td>
+        <td class="px-3 py-2"></td>
+        {total.map((v, i) => (
+          <td
+            class:list={[
+              'scramble px-3 py-2 text-right',
+              off[i] ? 'trick-tint bg-danger-50 text-danger-700' : 'bg-accent-50 text-accent-700',
+            ]}
+            style={`--stagger:${16 + i}`}
+          >
+            {v}
+          </td>
+        ))}
+      </tr>
+      <tr class="text-text-muted">
+        <td class="px-3 py-2">{s.targetLabel}</td>
+        <td class="px-3 py-2"></td>
+        {target.map((v) => (
+          <td class="px-3 py-2 text-right">{v}</td>
+        ))}
+      </tr>
+    </tbody>
+  </table>
+</div>

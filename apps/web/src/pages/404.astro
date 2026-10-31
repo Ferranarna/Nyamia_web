@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { CookieLoader } from '../components/mockups/CookieLoader'
+import { CommandBar } from '../components/mockups/CommandBar'
+import { buttonClass } from '../components/ui/button'
+import { getDictionary } from '../i18n'
+import { ROUTES } from '../i18n/routes'
+
+const t = getDictionary('es')
+const en = getDictionary('en')
+---
+
+<BaseLayout locale="es" title={t.meta.notFoundTitle} description={t.notFound.body}>
+  <section class="brand-wash">
+    <div class="mx-auto flex max-w-[40rem] flex-col items-center px-5 py-24 text-center lg:py-32">
+      <CookieLoader size={112} />
+      <p class="mt-6 text-sm font-semibold text-brand-700 tabular-nums">{t.notFound.code}</p>
+      <h1 class="mt-2 text-statement text-text">{t.notFound.headline}</h1>
+      <p class="mt-4 text-lead text-text-muted">{t.notFound.body}</p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href={ROUTES.home.es} class={buttonClass('primary', 'lg')}>
+          {t.notFound.home}
+        </a>
+        <a href={`${ROUTES.home.es}#demo`} class={buttonClass('ghost', 'lg')}>
+          {t.notFound.cta}
+        </a>
+      </div>
+      <p class="mt-6 text-sm text-text-muted" lang="en">
+        <a href={ROUTES.home.en} hreflang="en" class="underline underline-offset-2 hover:text-text">
+          {en.notFound.home}
+        </a>
+      </p>
+      <div aria-hidden="true" inert class="mt-12 w-full text-left">
+        <CommandBar t={t.mockup} mode="empty" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

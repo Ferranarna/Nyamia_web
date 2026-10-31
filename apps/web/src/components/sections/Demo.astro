@@ -1,0 +1,76 @@
+---
+import Icon from '../ui/Icon.astro'
+import DemoForm from '../form/DemoForm'
+import { getDictionary, type Locale } from '../../i18n'
+import { ANCHORS, ROUTES } from '../../i18n/routes'
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = getDictionary(locale)
+const d = t.demo
+const copy = {
+  form: d.form,
+  validation: d.validation,
+  success: d.success,
+  errors: d.errors,
+  status: t.mockup.menu.status,
+  externalLink: t.a11y.externalLink,
+}
+---
+
+<section id={ANCHORS.demo} aria-labelledby="demo-title" class="brand-wash-end scroll-mt-16 py-section">
+  <div class="mx-auto grid max-w-[75rem] gap-12 px-5 sm:px-6 lg:grid-cols-12 lg:gap-10">
+    <div class="lg:col-span-5" data-reveal>
+      <p class="eyebrow mb-4">{d.eyebrow}</p>
+      <h2 id="demo-title" class="text-statement text-text">
+        {d.headline}
+      </h2>
+      <p class="mt-5 text-lead text-text-muted">{d.sub}</p>
+      <p class="mt-4 inline-flex items-center gap-2 rounded-pill bg-brand-100 px-3 py-1 text-sm font-medium text-brand-700">
+        <span class="h-1.5 w-1.5 rounded-full bg-brand-500"></span>
+        {d.languageNote}
+      </p>
+
+      <h3 class="mt-10 text-lg font-semibold text-text">{d.next.title}</h3>
+      <ol class="mt-4 flex flex-col gap-4">
+        {d.next.steps.map((s, i) => (
+          <li class="flex gap-4" data-reveal style={`--stagger:${i + 1}`}>
+            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-600 text-sm font-semibold text-on-solid tabular-nums">
+              {i + 1}
+            </span>
+            <div>
+              <p class="font-semibold text-text">{s.title}</p>
+              <p class="text-text-muted">{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="mt-8 flex items-start gap-2 text-sm text-text-muted">
+        <Icon name="lock" size={16} class="mt-0.5 shrink-0 text-brand-600" />
+        <span>
+          {t.footer.noCookies}
+          <a
+            href={ROUTES.privacy[locale]}
+            class="ml-1 font-medium text-brand-700 underline underline-offset-2"
+          >
+            {t.legal.privacyLinkLabel}
+          </a>
+        </span>
+      </p>
+    </div>
+
+    <div class="lg:col-span-7" data-reveal style="--stagger:1">
+      <div class="relative rounded-window border border-border bg-surface p-5 shadow-lg sm:p-8">
+        <h3 class="mb-5 text-title text-text">{d.form.title}</h3>
+        <noscript>
+          <p class="mb-5 rounded-control border border-accent-100 bg-accent-50 px-4 py-3 text-sm text-accent-700">
+            {d.form.noScript}
+          </p>
+        </noscript>
+        <DemoForm client:visible copy={copy} locale={locale} privacyHref={ROUTES.privacy[locale]} />
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,532 @@
+@import 'tailwindcss';
+/* Drop Tailwind's default palette: only brand tokens exist (guard test enforces it too). */
+@import './reset-palette.css';
+@import '@nyamia/brand/tokens.css';
+
+@custom-variant enhanced (&:where([data-enhanced='true'] *));
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color-scheme: light;
+    scroll-padding-top: 76px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background-color: var(--color-canvas);
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-brand-100);
+    color: var(--color-text);
+  }
+
+  /* Same global rule as the app's index.css. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-delay: 0ms !important;
+    }
+  }
+}
+
+@utility brand-wash {
+  background-image: radial-gradient(1200px 520px at 15% -120px, var(--color-brand-100), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+@utility brand-wash-end {
+  background-image: radial-gradient(1000px 420px at 85% 72%, var(--color-brand-100), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(var(--color-border-strong) 1px, transparent 1.5px);
+  background-size: 20px 20px;
+}
+
+@utility eyebrow {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-brand-700);
+}
+
+/* ---------- No-JS helpers ---------- */
+@media (scripting: none) {
+  .js-only {
+    display: none !important;
+  }
+}
+@media (scripting: enabled) {
+  .nojs-only {
+    display: none !important;
+  }
+}
+
+/* ---------- Reveal on enter (inview.ts adds data-inview) ---------- */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity var(--duration-reveal) var(--ease-expressive),
+      transform var(--duration-reveal) var(--ease-expressive);
+    transition-delay: calc(var(--stagger, 0) * 70ms);
+  }
+  [data-reveal][data-inview] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* "Trick" children: start state until their container is in view. */
+  [data-inview-scope]:not([data-inview]) .trick-pop {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  [data-inview-scope]:not([data-inview]) .trick-dim {
+    opacity: 1 !important;
+  }
+  [data-inview-scope]:not([data-inview]) .trick-draw {
+    stroke-dashoffset: 120;
+  }
+  [data-inview-scope]:not([data-inview]) .trick-tint {
+    background-color: var(--color-surface-muted) !important;
+    border-color: var(--color-border) !important;
+  }
+  [data-inview-scope]:not([data-inview]) .trick-fade {
+    opacity: 0;
+  }
+  [data-inview-scope]:not([data-inview]) .trick-before {
+    opacity: 1;
+  }
+  [data-inview-scope]:not([data-inview]) .trick-after {
+    opacity: 0;
+  }
+  .trick-pop,
+  .trick-dim,
+  .trick-tint,
+  .trick-fade,
+  .trick-before,
+  .trick-after {
+    transition:
+      opacity 300ms var(--ease-ui),
+      transform var(--duration-snap) var(--ease-snap),
+      background-color 300ms var(--ease-ui),
+      border-color 300ms var(--ease-ui);
+    transition-delay: calc(250ms + var(--stagger, 0) * 70ms);
+  }
+  .trick-draw {
+    transition: stroke-dashoffset 600ms var(--ease-expressive) 300ms;
+  }
+}
+.trick-draw {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 0;
+}
+.trick-before {
+  opacity: 0;
+}
+
+/* ---------- Hero product timeline (pure CSS, plays once) ----------
+ * One-frame switches use `1ms linear`, not `steps(1)`: Chromium can compute the end of a
+ * 1ms steps(1) animation as progress 0.999…, which leaves the element in its "from" state. */
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes hero-window-in {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.985);
+  }
+}
+@keyframes char-in {
+  from {
+    opacity: 0;
+  }
+}
+/* Blink for an element that rests at opacity 0 (visible for the first half of each cycle). */
+@keyframes caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes press {
+  50% {
+    transform: scale(0.96);
+    background-color: var(--color-brand-700);
+  }
+}
+@keyframes slide-in-x {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.96);
+  }
+}
+@keyframes tint-none {
+  from {
+    background-color: var(--color-surface-muted);
+    border-color: var(--color-border);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-text > * {
+    animation: hero-in var(--duration-reveal) var(--ease-expressive) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+  .hero-window {
+    animation: hero-window-in 700ms var(--ease-expressive) 250ms both;
+  }
+  .hero-char {
+    animation: char-in 1ms linear both;
+    animation-delay: calc(700ms + var(--c) * 38ms);
+  }
+  .hero-caret {
+    animation: caret 1s linear 2000ms 3;
+  }
+  .hero-send {
+    animation: press 160ms var(--ease-ui) 2050ms both;
+  }
+  .hero-history {
+    animation: slide-in-x 300ms var(--ease-ui) 2150ms both;
+  }
+  .hero-menu-body {
+    animation: window-in 150ms var(--ease-ui) 2200ms both;
+  }
+  .hero-card {
+    animation: card-in 260ms var(--ease-snap) both;
+    animation-delay: calc(2300ms + var(--d) * 90ms + var(--s) * 30ms);
+  }
+  .hero-day {
+    animation: tint-none 300ms var(--ease-ui) both;
+    animation-delay: calc(3400ms + var(--d) * 110ms);
+  }
+  .hero-status-final,
+  .hero-total {
+    animation: fade-in 300ms var(--ease-ui) both;
+    animation-delay: calc(3400ms + var(--d) * 110ms);
+  }
+  .hero-status-initial {
+    animation: fade-out 1ms linear both;
+    animation-delay: calc(3400ms + var(--d) * 110ms);
+  }
+  .hero-legend {
+    animation: pop-in 250ms var(--ease-snap) 4300ms both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-status-initial {
+    opacity: 0;
+  }
+}
+.hero-mask {
+  mask-image: linear-gradient(black 72%, transparent);
+}
+
+/* ---------- Problem: words light up with scroll (progressive) ---------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-words .w {
+      animation: word-light linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+  }
+}
+@keyframes word-light {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Spreadsheet scramble */
+@keyframes scramble {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  60% {
+    opacity: 0.2;
+  }
+  40%,
+  80% {
+    opacity: 0.7;
+  }
+}
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-inview] .scramble {
+    animation: scramble 900ms steps(5) both;
+    animation-delay: calc(var(--stagger, 0) * 40ms);
+  }
+}
+
+/* ---------- Story stage ---------- */
+.stage-scale {
+  transform: translateX(-50%) scale(var(--stage-scale, 1));
+  transform-origin: top center;
+}
+.story-step {
+  transition: opacity 300ms var(--ease-ui);
+}
+/* Inactive steps are de-emphasised by colour (not opacity) so text keeps AA contrast. */
+.story-step :is(h3, .step-kicker) {
+  transition: color 300ms var(--ease-ui);
+}
+[data-enhanced='true'] .story-step:not([data-active]) :is(h3, .step-kicker) {
+  color: var(--color-text-muted);
+}
+@media (min-width: 64rem) and (scripting: enabled) {
+  .story-frame {
+    display: none;
+  }
+}
+@media (min-width: 64rem) and (scripting: none) {
+  .story-stage-col {
+    display: none;
+  }
+}
+@keyframes ring-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--color-brand-100);
+  }
+}
+@keyframes ring-pulse-accent {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--color-accent-200);
+  }
+}
+.pulse-brand {
+  animation: ring-pulse 600ms var(--ease-ui) 2;
+}
+.pulse-accent {
+  animation: ring-pulse-accent 600ms var(--ease-ui) 2;
+}
+
+/* Tints and markers animate (the colour change is the message). */
+.tint-anim {
+  transition:
+    background-color 300ms var(--ease-ui),
+    border-color 300ms var(--ease-ui),
+    opacity 300ms var(--ease-ui),
+    transform 300ms var(--ease-ui);
+}
+.marker-anim {
+  transition:
+    left var(--duration-snap) var(--ease-snap),
+    background-color 300ms var(--ease-ui);
+}
+
+/* ---------- 404 cookie flipbook (real loader frames) ---------- */
+@keyframes flip6 {
+  to {
+    transform: translateX(-600%);
+  }
+}
+.cookie-strip {
+  animation: flip6 1.2s steps(6) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cookie-strip {
+    animation: none;
+    transform: translateX(-500%);
+  }
+}
+
+/* ---------- Spinner (app's spinner.sm) ---------- */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- FAQ details: progressive size interpolation ---------- */
+@supports (interpolate-size: allow-keywords) {
+  .faq {
+    interpolate-size: allow-keywords;
+  }
+  .faq details::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size 250ms var(--ease-ui),
+      content-visibility 250ms allow-discrete;
+  }
+  .faq details[open]::details-content {
+    block-size: auto;
+  }
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq details[open] .chev {
+  transform: rotate(180deg);
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  transition:
+    background-color 200ms var(--ease-ui),
+    box-shadow 200ms var(--ease-ui),
+    border-color 200ms var(--ease-ui);
+}
+.site-header[data-condensed] {
+  background-color: color-mix(in oklab, var(--color-canvas) 95%, transparent);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+.site-header .header-row {
+  transition: height 200ms var(--ease-ui);
+}
+.site-header[data-condensed] .header-row {
+  height: 56px;
+}
+@media (max-width: 63.99rem) {
+  .site-header[data-condensed] .header-row {
+    height: 52px;
+  }
+}
+.nav-link[aria-current] {
+  color: var(--color-brand-700);
+}
+.nav-link .bar {
+  transform: scaleX(0);
+  transition: transform 150ms var(--ease-ui);
+}
+.nav-link[aria-current] .bar {
+  transform: scaleX(1);
+}
+.mobile-sheet[hidden] {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-sheet:not([hidden]) {
+    animation: sheet-in 180ms var(--ease-ui);
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* ---------- Form success ---------- */
+@keyframes success-tint {
+  from {
+    background-color: var(--color-surface-muted);
+    border-color: var(--color-border);
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 60;
+  }
+}
+@keyframes snap-in {
+  from {
+    transform: scale(0.96);
+  }
+}
+.success-day {
+  animation:
+    success-tint 300ms var(--ease-ui) 250ms both,
+    snap-in var(--duration-snap) var(--ease-snap) 250ms both;
+}
+.success-check {
+  stroke-dasharray: 60;
+  animation: draw 500ms var(--ease-expressive) 400ms both;
+}
+.success-status-initial {
+  animation: fade-out 1ms linear 250ms both;
+}
+.success-status-final {
+  animation: fade-in 200ms var(--ease-ui) 250ms both;
+}
+.field-check {
+  animation: pop-in 150ms var(--ease-ui) both;
+}
+
+/* StoryStage: cards snapping into the week (replayed by remounting the grid). */
+@media (prefers-reduced-motion: no-preference) {
+  .seq-card {
+    animation: card-in 260ms var(--ease-snap) both;
+    animation-delay: calc(var(--d) * 90ms + var(--s) * 25ms);
+  }
+}

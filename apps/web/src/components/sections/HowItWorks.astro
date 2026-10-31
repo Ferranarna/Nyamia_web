@@ -1,0 +1,153 @@
+---
+import Section from '../ui/Section.astro'
+import Icon from '../ui/Icon.astro'
+import { buttonClass } from '../ui/button'
+import StoryStage from '../mockups/StoryStage'
+import { AppWindow } from '../mockups/AppWindow'
+import { ClientFicha } from '../mockups/ClientFicha'
+import { CommandBar } from '../mockups/CommandBar'
+import { Dock, initials } from '../mockups/Dock'
+import { WeekMenu } from '../mockups/WeekMenu'
+import { MacroBars } from '../mockups/MacroBars'
+import { RecipeModal } from '../mockups/RecipeModal'
+import { PdfSheet } from '../mockups/PdfPreview'
+import { LogoSlot } from '../mockups/LogoSlot'
+import { getDictionary, type Locale } from '../../i18n'
+import { ANCHORS } from '../../i18n/routes'
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = getDictionary(locale)
+const m = t.mockup
+const steps = t.howItWorks.steps
+const legend = [
+  ['green', t.howItWorks.legend.green],
+  ['orange', t.howItWorks.legend.orange],
+  ['red', t.howItWorks.legend.red],
+] as const
+const dot = { green: 'bg-brand-500', orange: 'bg-accent-500', red: 'bg-danger-400' } as const
+---
+
+<Section
+  id={ANCHORS.howItWorks}
+  eyebrow={t.howItWorks.eyebrow}
+  headline={t.howItWorks.headline}
+  lead={t.howItWorks.sub}
+  align="center"
+>
+  <div data-story data-testid="story" class="lg:grid lg:grid-cols-12 lg:gap-10">
+    <div class="relative lg:col-span-4">
+      <div
+        class="absolute top-0 bottom-0 left-[1.1rem] hidden w-0.5 rounded-pill bg-border lg:block"
+        aria-hidden="true"
+      >
+        <div class="h-full w-full origin-top scale-y-0 rounded-pill bg-brand-500" data-story-rail-fill></div>
+      </div>
+      <ol data-story-steps class="flex flex-col gap-16 lg:gap-0 lg:pt-[12svh] lg:pb-[20svh]">
+        {steps.map((s, i) => (
+          <li
+            data-story-step={i}
+            data-testid={`story-step-${i}`}
+            class="story-step group relative flex flex-col gap-6 lg:min-h-[70svh] lg:justify-center lg:pl-14"
+          >
+            <span
+              class="absolute top-1/2 left-2 hidden h-5 w-5 -translate-y-1/2 rounded-full border-2 border-border bg-canvas transition-colors duration-300 group-data-done:border-brand-500 group-data-done:bg-brand-500 lg:block"
+              aria-hidden="true"
+            />
+            <div data-reveal>
+              <p class="step-kicker flex items-center gap-3 text-sm font-semibold text-brand-700 tabular-nums">
+                {s.kicker}
+                <span class="rounded-pill bg-surface-muted px-2 py-0.5 text-xs font-medium text-text-muted lg:hidden">
+                  {i + 1} / {steps.length}
+                </span>
+              </p>
+              <h3 class="mt-2 text-title text-text">{s.title}</h3>
+              <p class="mt-3 max-w-[42ch] text-lead text-text-muted">{s.body}</p>
+              {i === 3 && (
+                <div class="mt-5">
+                  <p class="text-sm font-semibold text-text">{t.howItWorks.legend.title}</p>
+                  <ul class="mt-2 flex flex-col gap-1.5 text-sm text-text-muted">
+                    {legend.map(([status, label]) => (
+                      <li class="flex items-center gap-2">
+                        <span class:list={['h-3 w-3 rounded-full', dot[status]]} />
+                        {label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <figure class="story-frame" data-reveal>
+              <div
+                aria-hidden="true"
+                inert
+                class="overflow-hidden rounded-window border border-border bg-surface-muted p-3 sm:p-4"
+              >
+                {i === 0 && (
+                  <AppWindow title={m.windows.client} subtitle={m.client.name} bodyClassName="p-4">
+                    <ClientFicha t={m} />
+                  </AppWindow>
+                )}
+                {i === 1 && (
+                  <div class="flex flex-col gap-3">
+                    <CommandBar t={m} mode="typed" className="p-2 pl-3 text-sm" />
+                    <Dock chips={[{ label: m.client.name, initials: initials(m.client.name), count: 1 }]} />
+                  </div>
+                )}
+                {i === 2 && (
+                  <AppWindow title={m.windows.calendar} subtitle={m.client.name} bodyClassName="p-3">
+                    <WeekMenu t={m} mode="placed" variant="compact" illustrative />
+                  </AppWindow>
+                )}
+                {i === 3 && (
+                  <div class="flex flex-col gap-3">
+                    <AppWindow title={m.windows.calendar} subtitle={m.client.name} bodyClassName="p-3">
+                      <WeekMenu t={m} mode="fitted" variant="compact" />
+                    </AppWindow>
+                    <MacroBars t={m} state="after" className="w-full shadow-sm" />
+                  </div>
+                )}
+                {i === 4 && <RecipeModal t={m} edited className="mx-auto shadow-sm" />}
+                {i === 5 && (
+                  <div class="flex flex-col items-center gap-3">
+                    <PdfSheet t={m} />
+                    <LogoSlot label={m.pdf.logoPlaceholder} />
+                  </div>
+                )}
+              </div>
+              <figcaption class="sr-only">{t.a11y.mockupLabel}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ol>
+    </div>
+    <div class="story-stage-col hidden lg:col-span-8 lg:block">
+      <figure class="sticky top-[80px] flex h-[calc(100svh-104px)] flex-col">
+        <div class="flex min-h-0 w-full flex-1 flex-col justify-center gap-2" data-stage-box>
+          <StoryStage client:visible t={m} />
+          <figcaption class="text-center text-xs text-text-muted">
+            <span class="sr-only">{t.a11y.mockupLabel}. </span>
+            {m.illustrativeCaption}
+          </figcaption>
+        </div>
+      </figure>
+    </div>
+  </div>
+
+  <div
+    class="mt-16 flex flex-col items-start gap-5 rounded-window border border-brand-100 bg-brand-50 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10 lg:mt-8"
+    data-reveal
+  >
+    <p class="text-title text-text">{t.finalCta.headline}</p>
+    <a href={`#${ANCHORS.demo}`} class={buttonClass('primary', 'lg')} data-cta="mid">
+      {t.finalCta.cta}
+      <Icon
+        name="arrow-right"
+        size={18}
+        class="transition-transform duration-150 group-hover/btn:translate-x-[3px]"
+      />
+    </a>
+  </div>
+</Section>

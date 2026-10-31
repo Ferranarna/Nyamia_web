@@ -1,0 +1,86 @@
+---
+import '@fontsource-variable/inter'
+import '../styles/global.css'
+import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url'
+import Header from '../components/layout/Header.astro'
+import Footer from '../components/layout/Footer.astro'
+import { getDictionary, otherLocale, type Locale } from '../i18n'
+import { ROUTES, type RouteKey } from '../i18n/routes'
+
+interface Props {
+  locale: Locale
+  title: string
+  description: string
+  /** Route for canonical + hreflang alternates. Omit for 404 (noindex). */
+  route?: RouteKey
+  onHome?: boolean
+  jsonLd?: Record<string, unknown>
+}
+const { locale, title, description, route, onHome = false, jsonLd } = Astro.props
+const t = getDictionary(locale)
+const site = Astro.site ?? new URL('https://nyamia.com')
+const abs = (p: string) => new URL(p, site).href
+const canonical = route ? abs(ROUTES[route][locale]) : undefined
+const ogImage = abs(`/og-${locale}.png`)
+const other = otherLocale(locale)
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {route && (
+      <>
+        <link rel="alternate" hreflang="es" href={abs(ROUTES[route].es)} />
+        <link rel="alternate" hreflang="en" href={abs(ROUTES[route].en)} />
+        <link rel="alternate" hreflang="x-default" href={abs(ROUTES[route].es)} />
+      </>
+    )}
+    {!route && <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={t.meta.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.meta.ogAlt} />
+    <meta property="og:locale" content={locale === 'es' ? 'es_ES' : 'en_GB'} />
+    <meta property="og:locale:alternate" content={other === 'es' ? 'es_ES' : 'en_GB'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+    )}
+  </head>
+  <body class="min-h-dvh bg-canvas text-text antialiased">
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-control bg-surface px-4 py-2 text-sm font-medium text-text shadow-md focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      {t.a11y.skipToContent}
+    </a>
+    <Header locale={locale} route={route ?? 'home'} onHome={onHome} />
+    <main id="main" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+    <Footer locale={locale} route={route ?? 'home'} />
+    <script>
+      import '../scripts/header'
+      import '../scripts/inview'
+    </script>
+  </body>
+</html>

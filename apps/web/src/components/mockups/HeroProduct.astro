@@ -1,0 +1,43 @@
+---
+/** C1 · HeroProduct — zero JS: SSR mockups + CSS timeline (global.css "Hero product timeline"). */
+import { getImage } from 'astro:assets'
+import logo from '@nyamia/brand/assets/logo-original.png'
+import { WorkspaceFrame } from './WorkspaceFrame'
+import { CommandBar } from './CommandBar'
+import { AppWindow } from './AppWindow'
+import { WeekMenu } from './WeekMenu'
+import { getDictionary, type Locale } from '../../i18n'
+
+interface Props {
+  locale: Locale
+}
+const t = getDictionary(Astro.props.locale)
+const m = t.mockup
+const logoImg = await getImage({ src: logo, width: 56, height: 56, format: 'webp' })
+---
+
+<figure class="hero-window relative mx-auto mt-10 w-full max-w-[70rem] lg:mt-8" data-testid="hero-product">
+  <div class="pointer-events-none absolute -top-24 left-1/2 -z-10 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-accent-50 opacity-60 blur-3xl"></div>
+  <div aria-hidden="true" inert class="hero-mask">
+    <div class="hidden h-[560px] overflow-hidden rounded-window border border-window-border bg-surface shadow-lg lg:block">
+      <WorkspaceFrame t={m} logoSrc={logoImg.src} variant="desktop" heroHistory className="h-full">
+        <CommandBar t={m} mode="hero" />
+        <AppWindow title={m.windows.calendar} subtitle={m.client.name} bodyClassName="p-4">
+          <WeekMenu t={m} mode="final" hero />
+        </AppWindow>
+      </WorkspaceFrame>
+    </div>
+    <div class="h-[400px] overflow-hidden rounded-window border border-window-border bg-surface shadow-lg lg:hidden">
+      <WorkspaceFrame t={m} logoSrc={logoImg.src} variant="mobile">
+        <CommandBar t={m} mode="hero" className="p-2 pl-3 text-sm" />
+        <AppWindow title={m.windows.calendar} subtitle={m.client.name} bodyClassName="p-3">
+          <WeekMenu t={m} mode="final" variant="compact" hero />
+        </AppWindow>
+      </WorkspaceFrame>
+    </div>
+  </div>
+  <figcaption class="mt-3 text-center text-xs text-text-muted">
+    <span class="sr-only">{t.a11y.mockupLabel}. </span>
+    {m.illustrativeCaption}
+  </figcaption>
+</figure>

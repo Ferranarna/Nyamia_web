@@ -1,0 +1,11 @@
+dist
+.astro
+node_modules
+playwright-report
+test-results
+pnpm-lock.yaml
+public
+src/assets
+# Copy is owned by Business: keep their formatting untouched.
+src/i18n/es.ts
+src/i18n/en.ts

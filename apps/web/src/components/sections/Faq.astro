@@ -1,0 +1,51 @@
+---
+import Section from '../ui/Section.astro'
+import Icon from '../ui/Icon.astro'
+import { buttonClass } from '../ui/button'
+import { getDictionary, type Locale } from '../../i18n'
+import { ANCHORS } from '../../i18n/routes'
+
+interface Props {
+  locale: Locale
+}
+const t = getDictionary(Astro.props.locale)
+---
+
+<Section id={ANCHORS.faq}>
+  <div class="grid gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-4">
+      <div class="lg:sticky lg:top-28" data-reveal>
+        <p class="eyebrow mb-4">{t.faq.eyebrow}</p>
+        <h2 id={`${ANCHORS.faq}-title`} class="text-statement text-text">
+          {t.faq.headline}
+        </h2>
+        <div class="mt-8 hidden lg:block">
+          <a href={`#${ANCHORS.demo}`} class={buttonClass('secondary', 'lg')}>
+            {t.nav.cta}
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="faq lg:col-span-8" data-reveal>
+      {t.faq.items.map((item) => (
+        <details class="group border-b border-border">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 rounded-control py-5 text-lg font-medium text-text hover:text-brand-700">
+            {item.q}
+            <Icon
+              name="chevron-down"
+              size={22}
+              class="chev shrink-0 text-text-muted transition-transform duration-150"
+            />
+          </summary>
+          <p class="max-w-[62ch] pb-6 text-lead text-text-muted">{item.a}</p>
+        </details>
+      ))}
+    </div>
+    <!-- Below lg the secondary CTA follows the list instead of splitting headline and questions. -->
+    <div class="lg:hidden">
+      <a href={`#${ANCHORS.demo}`} class={buttonClass('secondary', 'lg')}>
+        {t.nav.cta}
+      </a>
+    </div>
+  </div>
+</Section>

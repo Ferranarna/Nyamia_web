@@ -1,0 +1,69 @@
+---
+import Icon from '../ui/Icon.astro'
+import type { IconName } from '../ui/icons'
+import { getDictionary, type Locale } from '../../i18n'
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = getDictionary(locale)
+const c = t.control
+const beats = t.hero.tagline.replace(/\.$/, '').split(/,\s*/)
+const icons: IconName[] = ['list-checks', 'calculator', 'eye-off', 'compass']
+---
+
+<section id="control" aria-labelledby="control-title" class="py-section sm:px-4">
+  <div class="mx-auto max-w-[87.5rem] bg-brand-900 px-5 py-section text-on-solid sm:rounded-[var(--radius-section)] sm:px-10">
+    <div class="mx-auto max-w-[75rem]">
+      <!-- The tagline is the room's statement; the H2 keeps the headline as its eyebrow (UX P2-5). -->
+      <div class="lg:text-center" data-reveal>
+        <h2 id="control-title" class="text-sm font-semibold tracking-[0.06em] text-brand-200 uppercase">
+          {c.headline}
+        </h2>
+      </div>
+
+      <ol
+        class="mt-6 flex flex-col gap-2 text-statement lg:items-center lg:text-center"
+        aria-label={t.hero.tagline}
+      >
+        {beats.map((b, i) => (
+          <li
+            data-reveal
+            style={`--stagger:${i * 3.5}`}
+            class:list={[
+              'flex items-center gap-4',
+              i === beats.length - 1 ? 'text-brand-300' : 'text-on-solid',
+            ]}
+          >
+            {i === beats.length - 1 && (
+              <span data-inview-scope class="inline-flex" aria-hidden="true">
+                <span class="trick-pop h-3 w-3 rounded-full bg-brand-400" style="--stagger:12" />
+              </span>
+            )}
+            {b}
+          </li>
+        ))}
+      </ol>
+      <p class="mt-8 max-w-[48rem] text-lead text-brand-100 lg:mx-auto lg:text-center" data-reveal>
+        {c.sub}
+      </p>
+
+      <ul class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {c.items.map((item, i) => (
+          <li class="flex flex-col gap-3" data-reveal style={`--stagger:${i}`}>
+            <span class="grid h-10 w-10 place-items-center rounded-full bg-brand-800 text-brand-200">
+              <Icon name={icons[i] ?? 'check'} size={20} />
+            </span>
+            <h3 class="text-lg font-semibold">{item.title}</h3>
+            <p class="text-brand-100">{item.body}</p>
+          </li>
+        ))}
+      </ul>
+
+      <p class="mt-16 border-t border-brand-800 pt-10 text-sm text-brand-200 lg:text-center" data-reveal>
+        {c.fictitiousNote}
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,53 @@
+---
+import Section from '../ui/Section.astro'
+import Icon from '../ui/Icon.astro'
+import ProblemSheet from '../mockups/ProblemSheet.astro'
+import type { IconName } from '../ui/icons'
+import { getDictionary, type Locale } from '../../i18n'
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = getDictionary(locale)
+const icons: IconName[] = ['calculator', 'shuffle', 'users', 'file-text']
+const words = t.problem.sub.split(' ')
+---
+
+<Section id="problema" class="relative">
+  <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
+    <div class="lg:col-span-7">
+      <p class="eyebrow mb-4" data-reveal>
+        {t.problem.eyebrow}
+      </p>
+      <h2 id="problema-title" class="text-statement text-text" data-reveal>
+        {t.problem.headline}
+      </h2>
+      <p class="scroll-words mt-6 max-w-[30ch] text-title font-medium text-text">
+        {words.map((w) => (
+          <span class="w">{w} </span>
+        ))}
+      </p>
+      <ul class="mt-12 grid gap-6 sm:grid-cols-2">
+        {t.problem.points.map((p, i) => (
+          <li class="flex flex-col gap-2" data-reveal style={`--stagger:${i}`}>
+            <span class="grid h-10 w-10 place-items-center rounded-control bg-danger-50 text-danger-600">
+              <Icon name={icons[i] ?? 'info'} size={20} />
+            </span>
+            <h3 class="text-lg font-semibold text-text">{p.title}</h3>
+            <p class="text-text-muted">{p.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <figure class="lg:col-span-5 lg:pt-20">
+      <div class="lg:sticky lg:top-28" data-reveal>
+        <ProblemSheet locale={locale} />
+        <figcaption class="sr-only">{t.a11y.mockupLabel}</figcaption>
+      </div>
+    </figure>
+  </div>
+  <p class="mx-auto mt-20 max-w-[40ch] text-center text-title text-brand-700 lg:mt-28" data-reveal>
+    {t.problem.closing}
+  </p>
+</Section>

@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from './sections/Hero.astro'
+import Problem from './sections/Problem.astro'
+import HowItWorks from './sections/HowItWorks.astro'
+import Features from './sections/Features.astro'
+import Control from './sections/Control.astro'
+import Demo from './sections/Demo.astro'
+import Faq from './sections/Faq.astro'
+import { getDictionary, type Locale } from '../i18n'
+import { ROUTES } from '../i18n/routes'
+
+interface Props {
+  locale: Locale
+}
+const { locale } = Astro.props
+const t = getDictionary(locale)
+const site = Astro.site ?? new URL('https://nyamia.com')
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: t.meta.siteName,
+  url: new URL(ROUTES.home[locale], site).href,
+  description: t.meta.description,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  inLanguage: locale,
+  image: new URL(`/og-${locale}.png`, site).href,
+}
+---
+
+<BaseLayout
+  locale={locale}
+  title={t.meta.title}
+  description={t.meta.description}
+  route="home"
+  onHome
+  jsonLd={jsonLd}
+>
+  <Hero locale={locale} />
+  <Problem locale={locale} />
+  <HowItWorks locale={locale} />
+  <Features locale={locale} />
+  <Control locale={locale} />
+  <Demo locale={locale} />
+  <Faq locale={locale} />
+</BaseLayout>

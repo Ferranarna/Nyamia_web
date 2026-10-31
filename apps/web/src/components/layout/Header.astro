@@ -1,0 +1,160 @@
+---
+import BrandMark from './BrandMark.astro'
+import Icon from '../ui/Icon.astro'
+import { buttonClass } from '../ui/button'
+import { getDictionary, otherLocale, type Locale } from '../../i18n'
+import { ANCHORS, APP_URL, ROUTES, anchor, type RouteKey } from '../../i18n/routes'
+
+interface Props {
+  locale: Locale
+  route: RouteKey
+  onHome: boolean
+}
+const { locale, route, onHome } = Astro.props
+const t = getDictionary(locale)
+const other = otherLocale(locale)
+const links = [
+  { id: ANCHORS.howItWorks, label: t.nav.howItWorks },
+  { id: ANCHORS.features, label: t.nav.features },
+  { id: ANCHORS.faq, label: t.nav.faq },
+]
+const demoHref = anchor(locale, ANCHORS.demo, onHome)
+---
+
+<header class="site-header sticky top-0 z-30 border-b border-transparent" data-site-header>
+  <div class="header-row mx-auto flex h-[60px] max-w-[77.5rem] items-center gap-4 px-5 sm:px-6 lg:h-[72px]">
+    <a href={ROUTES.home[locale]} aria-label={t.a11y.homeLink} class="shrink-0 rounded-control">
+      <BrandMark name={t.meta.siteName} />
+    </a>
+
+    <nav aria-label={t.a11y.mainNav} class="mx-auto hidden lg:block">
+      <ul class="flex items-center gap-8">
+        {links.map((l) => (
+          <li>
+            <a
+              href={anchor(locale, l.id, onHome)}
+              data-nav-target={l.id}
+              class="nav-link relative py-2 text-sm font-medium text-text-muted transition-colors duration-150 hover:text-text"
+            >
+              {l.label}
+              <span class="bar absolute inset-x-0 -bottom-0.5 h-0.5 origin-left rounded-pill bg-brand-500" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-2 lg:ml-0">
+      <div class="hidden items-center gap-1 text-sm lg:flex" role="group" aria-label={t.a11y.languageSwitch}>
+        <span aria-current="true" class="px-1.5 font-semibold text-text">
+          {t.nav.languageCurrent}
+        </span>
+        <span aria-hidden="true" class="text-border-strong">
+          ·
+        </span>
+        <a
+          href={ROUTES[route][other]}
+          hreflang={other}
+          lang={other}
+          class="rounded-control px-1.5 py-1 font-medium text-text-muted hover:text-text"
+        >
+          {t.nav.languageOther}
+          <span class="sr-only"> · {t.nav.languageOtherName}</span>
+        </a>
+      </div>
+      <a href={APP_URL} class:list={[buttonClass('ghost', 'sm'), 'max-lg:hidden']}>
+        {t.nav.login}
+      </a>
+      <a href={demoHref} class:list={[buttonClass('primary', 'sm'), 'lg:h-10 lg:px-4']} data-cta="header">
+        {t.nav.cta}
+      </a>
+      <button
+        type="button"
+        class="js-only -mr-1 inline-grid h-10 w-10 place-items-center rounded-control text-text hover:bg-surface-muted lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-sheet"
+        aria-label={t.a11y.openMenu}
+        data-label-open={t.a11y.openMenu}
+        data-label-close={t.a11y.closeMenu}
+        data-menu-toggle
+      >
+        <span data-icon-open>
+          <Icon name="menu" size={22} />
+        </span>
+        <span data-icon-close hidden>
+          <Icon name="x" size={22} />
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-sheet"
+    class="mobile-sheet absolute inset-x-0 top-full border-b border-border bg-surface shadow-md lg:hidden"
+    hidden
+    data-mobile-sheet
+  >
+    <ul class="flex flex-col px-5 py-3">
+      {links.map((l) => (
+        <li>
+          <a
+            href={anchor(locale, l.id, onHome)}
+            class="block rounded-control px-2 py-3 text-base font-medium text-text hover:bg-surface-muted"
+          >
+            {l.label}
+          </a>
+        </li>
+      ))}
+      <li class="my-2 border-t border-border"></li>
+      <li class="flex items-center justify-between px-2 py-2">
+        <span class="text-sm text-text-muted">{t.nav.languageLabel}</span>
+        <span class="flex items-center gap-2 text-sm">
+          <span aria-current="true" class="font-semibold text-text">
+            {t.nav.languageCurrent}
+          </span>
+          <span aria-hidden="true" class="text-border-strong">
+            ·
+          </span>
+          <a
+            href={ROUTES[route][other]}
+            hreflang={other}
+            lang={other}
+            class="font-medium text-brand-700 underline"
+          >
+            {t.nav.languageOtherName}
+          </a>
+        </span>
+      </li>
+      <li>
+        <a
+          href={APP_URL}
+          class="block rounded-control px-2 py-3 text-base font-medium text-text hover:bg-surface-muted"
+        >
+          {t.nav.login}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <nav aria-label={t.a11y.mainNav} class="nojs-only border-t border-border bg-canvas lg:hidden">
+    <ul class="flex flex-wrap gap-x-5 gap-y-1 px-5 py-2 text-sm font-medium">
+      {links.map((l) => (
+        <li>
+          <a href={anchor(locale, l.id, onHome)} class="text-text-muted hover:text-text">
+            {l.label}
+          </a>
+        </li>
+      ))}
+      <li>
+        <a href={ROUTES[route][other]} hreflang={other} lang={other} class="text-text-muted">
+          {t.nav.languageOther}
+        </a>
+      </li>
+      <li>
+        <a href={APP_URL} class="text-text-muted">
+          {t.nav.login}
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>

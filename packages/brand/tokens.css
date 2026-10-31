@@ -1,0 +1,113 @@
+/*
+ * Nyamia brand tokens for the website.
+ * SOURCE: copied verbatim from the product's design system
+ * (../NutriBot/frontend/src/index.css @theme, feature 035) so nyamia.com and
+ * app.nyamia.com look like one product. Keep names/values in sync with the
+ * app; website-only additions go in the marked block at the end and must use
+ * the same palette.
+ */
+@theme {
+  --font-sans: 'Inter Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Brand green */
+  --color-brand-50: #eefaf2;
+  --color-brand-100: #d5f1df;
+  --color-brand-200: #aee4c4;
+  --color-brand-300: #7fd3a3;
+  --color-brand-400: #52bd85;
+  --color-brand-500: #22a566;
+  --color-brand-600: #14804b;
+  --color-brand-700: #0f6a3c;
+  --color-brand-800: #0d5430;
+  --color-brand-900: #0b3f25;
+
+  /* Accent orange: attention / AI / "needs review" */
+  --color-accent-50: #fff5eb;
+  --color-accent-100: #ffe6cc;
+  --color-accent-200: #ffcf9f;
+  --color-accent-300: #fdb06a;
+  --color-accent-400: #fa9640;
+  --color-accent-500: #f77f1b;
+  --color-accent-600: #b85405;
+  --color-accent-700: #8f4004;
+
+  /* Danger (compliance red, destructive actions) */
+  --color-danger-50: #fdecea;
+  --color-danger-100: #f6c9c5;
+  --color-danger-400: #e5736d;
+  --color-danger-600: #c4352f;
+  --color-danger-700: #a12a25;
+
+  /* Neutrals (slightly green-biased, matching the brand) */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f6f3;
+  --color-border: #dfe7e2;
+  --color-border-strong: #c6d3cb;
+  --color-text: #12211a;
+  --color-text-muted: #5b6b63;
+  --color-scrim: rgb(18 33 26 / 0.45);
+  --color-on-solid: #ffffff;
+
+  /* Radius scale */
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --radius-window: 18px;
+
+  /* Elevation scale (the default shadow-sm/md/lg utilities are remapped) */
+  --shadow-sm: 0 1px 2px rgb(18 33 26 / 0.06);
+  --shadow-md: 0 4px 14px rgb(18 33 26 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(18 33 26 / 0.12);
+
+  /* Window chrome (app mockups reproduce the app's window manager) */
+  --color-window-header: var(--color-surface);
+  --color-window-border: var(--color-border);
+  --shadow-window-active: var(--shadow-lg);
+
+  /* Motion (app) */
+  --ease-ui: cubic-bezier(0.2, 0, 0, 1);
+  --duration-ui: 150ms;
+
+  /* ---- Website-only additions (same palette, marketing scale) ---- */
+  --color-canvas: #f6faf7; /* app body background */
+  --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-reveal: 600ms;
+  --radius-pill: 999px;
+  --radius-section: 40px;
+  --shadow-window-minimized: var(--shadow-sm);
+
+  /* Marketing type scale (ux.md §6.1) */
+  --text-display: clamp(3rem, 1.9rem + 4.4vw, 5.5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.035em;
+  --text-display--font-weight: 680;
+  --text-statement: clamp(2.25rem, 1.65rem + 2.4vw, 3.75rem);
+  --text-statement--line-height: 1.06;
+  --text-statement--letter-spacing: -0.03em;
+  --text-statement--font-weight: 650;
+  --text-title: clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.015em;
+  --text-title--font-weight: 600;
+  --text-lead: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-lead--line-height: 1.6;
+
+  /* Section rhythm (ux.md §6.2): py-section */
+  --spacing-section: clamp(4.5rem, 2.6rem + 7.5vw, 11rem);
+
+  /* Motion (ux.md §6.3) */
+  --ease-snap: linear(0, 0.42 9%, 0.83 19%, 1.04 29%, 1.08 35%, 1.04 45%, 0.99 60%, 1.005 75%, 1);
+  --duration-snap: 420ms;
+  --duration-count: 900ms;
+  --animate-window-in: window-in var(--duration-ui) var(--ease-ui);
+
+  @keyframes window-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

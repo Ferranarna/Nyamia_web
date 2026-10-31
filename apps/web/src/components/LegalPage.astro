@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getDictionary, type Locale } from '../i18n'
+import { ROUTES } from '../i18n/routes'
+
+interface Props {
+  locale: Locale
+  kind: 'privacy' | 'legal'
+}
+const { locale, kind } = Astro.props
+const t = getDictionary(locale)
+const doc = kind === 'privacy' ? t.privacy : t.legal
+const intro = kind === 'privacy' ? t.privacy.intro : null
+const title = kind === 'privacy' ? t.meta.privacyTitle : t.meta.legalTitle
+const description = kind === 'privacy' ? t.meta.privacyDescription : t.meta.legalDescription
+const slug = (s: string, i: number) =>
+  `s${i + 1}-` +
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+// Email addresses in the copy become mailto links (contact data is plain text in the dictionary).
+const EMAIL = /([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/g
+const parts = (p: string) => p.split(EMAIL).filter(Boolean)
+const isEmail = (s: string) => /^[\w.+-]+@[\w-]+(?:\.[\w-]+)+$/.test(s)
+---
+
+<BaseLayout locale={locale} title={title} description={description} route={kind}>
+  <div class="brand-wash">
+    <div class="mx-auto grid max-w-[75rem] gap-10 px-5 py-16 sm:px-6 lg:grid-cols-12 lg:py-24">
+      <nav aria-label={t.a11y.tableOfContents} class="lg:col-span-3">
+        <div class="lg:sticky lg:top-28">
+          <p class="eyebrow mb-3">{t.a11y.tableOfContents}</p>
+          <ol class="flex flex-col gap-2 text-sm">
+            {doc.sections.map((s, i) => (
+              <li>
+                <a href={`#${slug(s.heading, i)}`} class="text-text-muted hover:text-brand-700">
+                  {s.heading}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </nav>
+      <article class="max-w-[68ch] text-[1.0625rem] leading-[1.65] text-text lg:col-span-8">
+        <h1 class="text-[length:clamp(2.25rem,1.8rem+1.6vw,3rem)] leading-[1.08] font-semibold tracking-[-0.03em]">
+          {doc.title}
+        </h1>
+        <p class="mt-3 text-sm text-text-muted tabular-nums">{doc.updatedLabel}</p>
+        {intro && <p class="mt-8">{intro}</p>}
+        {doc.sections.map((s, i) => (
+          <section aria-labelledby={slug(s.heading, i)} class="mt-10">
+            <h2 id={slug(s.heading, i)} class="scroll-mt-24 text-2xl font-semibold tracking-tight">
+              {s.heading}
+            </h2>
+            {s.paragraphs.map((p) => (
+              <p class="mt-4">
+                {parts(p).map((part) =>
+                  isEmail(part) ? (
+                    <a
+                      href={`mailto:${part}`}
+                      class="font-medium text-brand-700 underline underline-offset-2"
+                    >
+                      {part}
+                    </a>
+                  ) : (
+                    part
+                  ),
+                )}
+              </p>
+            ))}
+          </section>
+        ))}
+        {kind === 'legal' && (
+          <p class="mt-12">
+            <a href={ROUTES.privacy[locale]} class="font-medium text-brand-700 underline underline-offset-2">
+              {t.legal.privacyLinkLabel}
+            </a>
+          </p>
+        )}
+      </article>
+    </div>
+  </div>
+</BaseLayout>

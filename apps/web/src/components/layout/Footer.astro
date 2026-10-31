@@ -1,0 +1,60 @@
+---
+import BrandMark from './BrandMark.astro'
+import frame1 from '@nyamia/brand/assets/frame-1.svg?url'
+import { format, getDictionary, otherLocale, type Locale } from '../../i18n'
+import { APP_URL, ROUTES, type RouteKey } from '../../i18n/routes'
+
+interface Props {
+  locale: Locale
+  route: RouteKey
+}
+const { locale, route } = Astro.props
+const t = getDictionary(locale)
+const other = otherLocale(locale)
+const year = new Date().getFullYear()
+const linkClass = 'rounded-control text-text-muted underline-offset-4 hover:text-text hover:underline'
+---
+
+<footer class="border-t border-border bg-canvas">
+  <div class="mx-auto flex max-w-[75rem] flex-col gap-8 px-5 py-12 text-sm text-text-muted sm:px-6">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+      <div class="flex max-w-md flex-col gap-3">
+        <BrandMark name={t.meta.siteName} />
+        <p>{t.footer.tagline}</p>
+      </div>
+      <nav aria-label={t.footer.legal}>
+        <ul class="flex flex-wrap gap-x-6 gap-y-2">
+          <li>
+            <a class={linkClass} href={ROUTES.privacy[locale]}>
+              {t.footer.privacy}
+            </a>
+          </li>
+          <li>
+            <a class={linkClass} href={ROUTES.legal[locale]}>
+              {t.footer.legal}
+            </a>
+          </li>
+          <li>
+            <a class={linkClass} href={APP_URL}>
+              {t.footer.login}
+            </a>
+          </li>
+          <li>
+            <a class={linkClass} href={ROUTES[route][other]} hreflang={other} lang={other}>
+              {t.footer.language}
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="flex flex-col gap-3 border-t border-border pt-6 lg:flex-row lg:items-center lg:justify-between">
+      <p class="max-w-2xl text-xs">
+        {t.footer.disclaimer} {t.footer.noCookies}
+      </p>
+      <p class="flex items-center gap-2 tabular-nums">
+        <img src={frame1} alt="" width="21" height="28" class="h-7 w-auto" aria-hidden="true" />
+        {format(t.footer.copyright, { year })}
+      </p>
+    </div>
+  </div>
+</footer>

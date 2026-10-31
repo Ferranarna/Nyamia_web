@@ -1,0 +1,17 @@
+{
+  "name": "nyamia-web-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @nyamia/web dev",
+    "build": "pnpm --filter @nyamia/web build",
+    "preview": "pnpm --filter @nyamia/web preview",
+    "test": "pnpm --filter @nyamia/web test",
+    "test:e2e": "pnpm --filter @nyamia/web test:e2e",
+    "lint": "pnpm --filter @nyamia/web lint"
+  }
+}
